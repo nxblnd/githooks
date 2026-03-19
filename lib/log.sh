@@ -29,38 +29,38 @@ coloredMessage() {
     if [ -t 2 ]
     then
         # STDERR exists, we are in terminal, can do fancy output
-        printf '%b%s:%b %s\n' "$color" "$label" "$RESET" "$message" >&2
+        printf '%b%-8s%b %s\n' "$color" "$label" "$RESET" "$message" >&2
     else
         # STDERR does not exist, probably writing into a file -> no escape codes
-        printf '%s: %s\n' "$label" "$message" >&2
+        printf '%-7s: %s\n' "$label" "$message" >&2
     fi
 }
 
 debug() {
     if [ "$LOG_LEVEL" -gt "$LEVEL_INFO" ]
     then
-        coloredMessage "DEBUG" "$RESET" "$1"
+        coloredMessage "DEBUG:" "$RESET" "$1"
     fi
 }
 
 log() {
     if [ "$LOG_LEVEL" -gt "$LEVEL_WARNING" ]
     then
-        coloredMessage "INFO" "$CYAN" "$1"
+        coloredMessage "INFO:" "$CYAN" "$1"
     fi
 }
 
 warning() {
     if [ "$LOG_LEVEL" -gt "$LEVEL_ERROR" ]
     then
-        coloredMessage "WARNING" "$YELLOW" "$1"
+        coloredMessage "WARNING:" "$YELLOW" "$1"
     fi
 }
 
 error() {
     if [ "$LOG_LEVEL" -gt "$LEVEL_SILENT" ]
     then
-        coloredMessage "ERROR" "$RED" "$1"
+        coloredMessage "ERROR:" "$RED" "$1"
     fi
 }
 
