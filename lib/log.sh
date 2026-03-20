@@ -37,6 +37,11 @@ coloredMessage() {
 }
 
 output() {
+    if [ "$LOG_LEVEL" -lt "$LEVEL_INFO" ]
+    then
+        return
+    fi
+
     while getopts "l:" opt
     do
         case "$opt" in
@@ -50,28 +55,28 @@ output() {
 }
 
 debug() {
-    if [ "$LOG_LEVEL" -gt "$LEVEL_INFO" ]
+    if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
     then
         coloredMessage "DEBUG:" "$RESET" "$1"
     fi
 }
 
 log() {
-    if [ "$LOG_LEVEL" -gt "$LEVEL_WARNING" ]
+    if [ "$LOG_LEVEL" -ge "$LEVEL_INFO" ]
     then
         coloredMessage "INFO:" "$CYAN" "$1"
     fi
 }
 
 warning() {
-    if [ "$LOG_LEVEL" -gt "$LEVEL_ERROR" ]
+    if [ "$LOG_LEVEL" -ge "$LEVEL_WARNING" ]
     then
         coloredMessage "WARNING:" "$YELLOW" "$1"
     fi
 }
 
 error() {
-    if [ "$LOG_LEVEL" -gt "$LEVEL_SILENT" ]
+    if [ "$LOG_LEVEL" -ge "$LEVEL_ERROR" ]
     then
         coloredMessage "ERROR:" "$RED" "$1"
     fi
