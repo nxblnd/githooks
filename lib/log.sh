@@ -36,6 +36,19 @@ coloredMessage() {
     fi
 }
 
+output() {
+    while getopts "l:" opt
+    do
+        case "$opt" in
+            l) output_label="$OPTARG" ;;
+            *) exit 1 ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    coloredMessage "${output_label:-OUTPUT}:" "$GREEN" "$@"
+}
+
 debug() {
     if [ "$LOG_LEVEL" -gt "$LEVEL_INFO" ]
     then
