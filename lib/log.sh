@@ -22,17 +22,33 @@ LEVEL_DEBUG=4
 LOG_LEVEL="${LOG_LEVEL:-$LEVEL_INFO}"
 
 coloredMessage() {
-    label="$1"
-    color="$2"
-    message="$3"
+    OPTIND=1
+    while getopts "c:f:l:" opt
+    do
+        case "$opt" in
+            c) label_color="$OPTARG" ;;
+            f) output_format="$OPTARG" ;;
+            l) label_text="$OPTARG" ;;
+            *) exit 1;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    label_color=${label_color:-$RESET}
+    output_format=${output_format:-"%b%s%b: %s\n"}
+    message="$*"
 
     if [ -t 2 ]
     then
         # STDERR exists, we are in terminal, can do fancy output
-        printf '%b%-8s%b %s\n' "$color" "$label" "$RESET" "$message" >&2
+
+        # shellcheck disable=SC2059
+        printf "$output_format" "$label_color" "$label_text" "$RESET" "$message" >&2
     else
         # STDERR does not exist, probably writing into a file -> no escape codes
-        printf '%-7s: %s\n' "$label" "$message" >&2
+
+        # shellcheck disable=SC2059
+        printf "$output_format" "" "$label_text" "" "$message" >&2
     fi
 }
 
@@ -42,6 +58,7 @@ output() {
         return
     fi
 
+    OPTIND=1
     while getopts "l:" opt
     do
         case "$opt" in
@@ -51,34 +68,34 @@ output() {
     done
     shift $((OPTIND - 1))
 
-    coloredMessage "${output_label:-OUTPUT}:" "$GREEN" "$@"
+    coloredMessage -l "${output_label:-OUTPUT}" -c "$GREEN" "$*"
 }
 
 debug() {
     if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
     then
-        coloredMessage "DEBUG:" "$RESET" "$1"
+        coloredMessage -l "DEBUG" -c "$RESET" "$1"
     fi
 }
 
 log() {
     if [ "$LOG_LEVEL" -ge "$LEVEL_INFO" ]
     then
-        coloredMessage "INFO:" "$CYAN" "$1"
+        coloredMessage -l "INFO" -c "$CYAN" "$1"
     fi
 }
 
 warning() {
     if [ "$LOG_LEVEL" -ge "$LEVEL_WARNING" ]
     then
-        coloredMessage "WARNING:" "$YELLOW" "$1"
+        coloredMessage -l "WARNING" -c "$YELLOW" "$1"
     fi
 }
 
 error() {
     if [ "$LOG_LEVEL" -ge "$LEVEL_ERROR" ]
     then
-        coloredMessage "ERROR:" "$RED" "$1"
+        coloredMessage -l "ERROR" -c "$RED" "$1"
     fi
 }
 
