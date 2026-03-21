@@ -34,10 +34,21 @@ main() {
         fi
 
         log "  - $script_basename"
-        "$script" | while IFS= read -r line
-        do
-            output -l "$script_basename" "$line"
-        done
+
+        tmpfile=$(mktemp)
+
+        set +e
+        "$script" >"$tmpfile" 2>&1
+        status=$?
+        set -e
+
+        if [ "$status" -ne 0 ]
+        then
+            warning "    Script failed, see log below"
+            debug "    Exit code $status"
+            cat "$tmpfile"
+            exit 1
+        fi
     done
 
     debug "Done $HOOK_NAME hook"
