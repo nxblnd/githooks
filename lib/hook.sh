@@ -40,15 +40,23 @@ main() {
         set +e
         "$script" >"$tmpfile" 2>&1
         status=$?
+        debug "    Exit code $status"
         set -e
 
-        if [ "$status" -ne 0 ]
+        if [ "$status" -eq 0 ]
         then
+            if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
+            then
+                debug "    Script output below"
+                cat "$tmpfile"
+            fi
+        else
             warning "    Script failed, see log below"
-            debug "    Exit code $status"
             cat "$tmpfile"
             exit 1
         fi
+
+        rm "$tmpfile"
     done
 
     debug "Done $HOOK_NAME hook"
