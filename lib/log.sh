@@ -27,7 +27,7 @@ coloredMessage() {
     label_color=${label_color:-$RESET}
     message="$*"
 
-    printf "%b%s%b: %s\n" "$label_color" "$label_text" "$(reset)" "$message" >&2
+    printf "%b%-8s%b: %s\n" "$label_color" "$label_text" "$(reset)" "$message" >&2
 }
 
 output() {
