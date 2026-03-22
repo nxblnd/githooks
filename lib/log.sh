@@ -50,30 +50,22 @@ output() {
 }
 
 debug() {
-    if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
-    then
-        coloredMessage -l "DEBUG" -c "$(reset)" "$1"
-    fi
+    [ "$LOG_LEVEL" -lt "$LEVEL_DEBUG" ] && return 0
+    coloredMessage -l "DEBUG" -c "$(reset)" "$1"
 }
 
 log() {
-    if [ "$LOG_LEVEL" -ge "$LEVEL_INFO" ]
-    then
-        coloredMessage -l "INFO" -c "$(fg cyan)" "$1"
-    fi
+    [ "$LOG_LEVEL" -lt "$LEVEL_INFO" ] && return 0
+    coloredMessage -l "INFO" -c "$(fg cyan)" "$1"
 }
 
 warning() {
-    if [ "$LOG_LEVEL" -ge "$LEVEL_WARNING" ]
-    then
-        coloredMessage -l "WARNING" -c "$(fg yellow)" "$1"
-    fi
+    [ "$LOG_LEVEL" -lt "$LEVEL_WARNING" ] && return 0
+    coloredMessage -l "WARNING" -c "$(fg yellow)" "$1"
 }
 
 error() {
-    if [ "$LOG_LEVEL" -ge "$LEVEL_ERROR" ]
-    then
-        coloredMessage -l "ERROR" -c "$(fg red)" "$1"
-    fi
+    [ "$LOG_LEVEL" -lt "$LEVEL_ERROR" ] && return 0
+    coloredMessage -l "ERROR" -c "$(fg red)" "$1"
 }
 
