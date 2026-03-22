@@ -48,11 +48,11 @@ main() {
             if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
             then
                 debug "    Script output below"
-                cat "$tmpfile"
+                printFile "debug" "$tmpfile"
             fi
         else
             warning "    Script failed, see log below"
-            cat "$tmpfile"
+            printFile "warning" "$tmpfile"
             exit 1
         fi
 

@@ -50,3 +50,12 @@ error() {
     coloredMessage -l "ERROR" -c "$(fg red)" "$1"
 }
 
+printFile() {
+    printer_function=$1
+    filename=$2
+
+    while IFS= read -r line
+    do
+        "$printer_function" "$line"
+    done < "$filename"
+}
