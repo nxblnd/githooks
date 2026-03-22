@@ -30,25 +30,6 @@ coloredMessage() {
     printf "%b%-8s%b: %s\n" "$label_color" "$label_text" "$(reset)" "$message" >&2
 }
 
-output() {
-    if [ "$LOG_LEVEL" -lt "$LEVEL_INFO" ]
-    then
-        return
-    fi
-
-    OPTIND=1
-    while getopts "l:" opt
-    do
-        case "$opt" in
-            l) output_label="$OPTARG" ;;
-            *) exit 1 ;;
-        esac
-    done
-    shift $((OPTIND - 1))
-
-    coloredMessage -l "${output_label:-OUTPUT}" -c "$(fg green)" "$*"
-}
-
 debug() {
     [ "$LOG_LEVEL" -lt "$LEVEL_DEBUG" ] && return 0
     coloredMessage -l "DEBUG" -c "$(reset)" "$1"
