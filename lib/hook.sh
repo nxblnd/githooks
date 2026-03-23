@@ -29,29 +29,28 @@ main() {
 
         if [ ! -x "$script" ]
         then
-            debug "  - Skipping $script_basename, +x flag not set"
+            debug "Skipping $HOOK_NAME/$script_basename, +x flag not set"
             continue
         fi
-
-        log "  - $script_basename"
 
         tmpfile=$(mktemp)
 
         set +e
+        log "Running $HOOK_NAME/$script_basename"
         "$script" >"$tmpfile" 2>&1
         status=$?
-        debug "    Exit code $status"
+        debug "$HOOK_NAME/$script_basename exit code $status"
         set -e
 
         if [ "$status" -eq 0 ]
         then
             if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
             then
-                debug "    Script output below"
+                debug "$HOOK_NAME/$script_basename output below"
                 printFile "debug" "$tmpfile"
             fi
         else
-            warning "    Script failed, see log below"
+            warning "$HOOK_NAME/$script_basename failed, see log below"
             printFile "warning" "$tmpfile"
             exit 1
         fi
