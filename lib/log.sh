@@ -12,17 +12,20 @@ LEVEL_DEBUG=4
 
 LOG_LEVEL="${LOG_LEVEL:-$LEVEL_INFO}"
 
-coloredMessage() {
+printMessage() {
     OPTIND=1
-    while getopts "c:f:l:" opt
+    while getopts "c:l:v:" opt
     do
         case "$opt" in
             c) label_color="$OPTARG" ;;
             l) label_text="$OPTARG" ;;
+            v) verbosity_level="$OPTARG" ;;
             *) exit 1;;
         esac
     done
     shift $((OPTIND - 1))
+
+    [ "$LOG_LEVEL" -lt "$verbosity_level" ] && return 0
 
     label_color=${label_color:-$RESET}
     message="$*"
@@ -31,23 +34,19 @@ coloredMessage() {
 }
 
 debug() {
-    [ "$LOG_LEVEL" -lt "$LEVEL_DEBUG" ] && return 0
-    coloredMessage -l "DEBUG" -c "$(reset)" "$1"
+    printMessage -l "DEBUG" -c "$(reset)" -v "$LEVEL_DEBUG" "$1"
 }
 
 log() {
-    [ "$LOG_LEVEL" -lt "$LEVEL_INFO" ] && return 0
-    coloredMessage -l "INFO" -c "$(fg cyan)" "$1"
+    printMessage -l "INFO" -c "$(fg cyan)" -v "$LEVEL_INFO" "$1"
 }
 
 warning() {
-    [ "$LOG_LEVEL" -lt "$LEVEL_WARNING" ] && return 0
-    coloredMessage -l "WARNING" -c "$(fg yellow)" "$1"
+    printMessage -l "WARNING" -c "$(fg yellow)" -v "$LEVEL_WARNING" "$1"
 }
 
 error() {
-    [ "$LOG_LEVEL" -lt "$LEVEL_ERROR" ] && return 0
-    coloredMessage -l "ERROR" -c "$(fg red)" "$1"
+    printMessage -l "ERROR" -c "$(fg red)" -v "$LEVEL_ERROR" "$1"
 }
 
 printFile() {
