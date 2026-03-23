@@ -5,6 +5,7 @@ set -eu
 . "$(dirname "$0")/lib/log.sh"
 
 HOOK_NAME=$(basename "$0")
+LOG_LEVEL="${LOG_LEVEL:-$LEVEL_INFO}"
 
 checkSkipVars() {
     SKIP_ALL_HOOKS="${SKIP_ALL_HOOKS+skip}"

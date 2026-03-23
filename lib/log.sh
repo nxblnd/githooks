@@ -10,8 +10,6 @@ LEVEL_WARNING=2
 LEVEL_INFO=3
 LEVEL_DEBUG=4
 
-LOG_LEVEL="${LOG_LEVEL:-$LEVEL_INFO}"
-
 printMessage() {
     OPTIND=1
     while getopts "c:l:v:" opt
