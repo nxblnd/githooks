@@ -5,12 +5,8 @@ set -eu
 . "$(dirname "$0")/lib/log.sh"
 
 HOOK_NAME=$(basename "$0")
-LOG_LEVEL="${LOG_LEVEL:-$LEVEL_INFO}"
 
 checkSkipVars() {
-    SKIP_ALL_HOOKS="${SKIP_ALL_HOOKS+skip}"
-    SKIP_HOOKS=${SKIP_HOOKS:-" "}
-
     if [ -n "$SKIP_ALL_HOOKS" ] || echo "$HOOK_NAME" | grep -Eq "$SKIP_HOOKS"
     then
         log "Skipping $(basename "$0") hook"
@@ -20,7 +16,29 @@ checkSkipVars() {
     fi
 }
 
+resolveVar() {
+    env_var_name="$1"
+    git_config_path="$2"
+    default_value="$3"
+
+    env_var_value="$(printenv "$env_var_name" || true)"
+
+    if [ -n "$env_var_value" ]
+    then
+        echo "$env_var_value"
+    else
+        git config get "$git_config_path" 2>/dev/null || echo "$default_value"
+    fi
+}
+
+loadVars() {
+    LOG_LEVEL="$(resolveVar LOG_LEVEL hooks.log_level "$LEVEL_INFO")"
+    SKIP_HOOKS="$(resolveVar SKIP_HOOKS hooks.skip " ")"
+    SKIP_ALL_HOOKS="$(resolveVar SKIP_ALL_HOOKS hooks.skip_all "")"
+}
+
 main() {
+    loadVars
     checkSkipVars
 
     log "Running $HOOK_NAME hook"
