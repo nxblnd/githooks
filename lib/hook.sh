@@ -6,6 +6,19 @@ set -eu
 
 HOOK_NAME=$(basename "$0")
 
+if git config list >/dev/null
+then
+    # git >=2.46.0
+    getGitConfig() {
+        git config get "$1"
+    }
+else
+    # git <2.46.0
+    getGitConfig() {
+        git config --get "$1"
+    }
+fi
+
 checkSkipVars() {
     if [ -n "$SKIP_ALL_HOOKS" ] || echo "$HOOK_NAME" | grep -Eq "$SKIP_HOOKS"
     then
@@ -27,7 +40,7 @@ resolveVar() {
     then
         echo "$env_var_value"
     else
-        git config get "$git_config_path" 2>/dev/null || echo "$default_value"
+        getGitConfig "$git_config_path" 2>/dev/null || echo "$default_value"
     fi
 }
 
