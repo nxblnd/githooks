@@ -57,6 +57,9 @@ main() {
     log "Running $HOOK_NAME hook"
     for script in "$HOOK_NAME.d"/*
     do
+        # Safeguard empty directory expansion into '*' named file.
+        [ -e "$script" ] || continue
+
         script_basename=$(basename "$script")
 
         if [ ! -x "$script" ]
