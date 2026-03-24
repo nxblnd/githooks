@@ -50,9 +50,20 @@ loadVars() {
     SKIP_ALL_HOOKS="$(resolveVar SKIP_ALL_HOOKS hooks.skip_all "")"
 }
 
+cleanup() {
+    if [ -e "$tmpfile" ]
+    then
+        debug "Removing tmpfile"
+        rm "$tmpfile"
+    fi
+}
+
 main() {
     loadVars
     checkSkipVars
+
+    tmpfile=$(mktemp --suffix "_githook")
+    trap 'cleanup' INT QUIT TERM EXIT
 
     log "Running $HOOK_NAME hook"
     for script in "$HOOK_NAME.d"/*
@@ -68,8 +79,6 @@ main() {
             continue
         fi
 
-        tmpfile=$(mktemp)
-
         set +e
         log "Running $HOOK_NAME/$script_basename"
         "$script" >"$tmpfile" 2>&1
@@ -84,13 +93,22 @@ main() {
                 debug "$HOOK_NAME/$script_basename output below"
                 printFile "debug" "$tmpfile"
             fi
-        else
+        elif [ "$status" -lt 126 ]
+        then
             warning "$HOOK_NAME/$script_basename failed, see log below"
             printFile "warning" "$tmpfile"
             exit 1
+        elif [ "$status" -eq 126 ]
+        then
+            error "$HOOK_NAME/$script_basename was not executable. How is this code running?"
+            exit 2
+        elif [ "$status" -eq 127 ]
+        then
+            error "$HOOK_NAME/$script_basename was not found. How is this code running?"
+            exit 2
+        else
+            warning "$HOOK_NAME/$script_basename was interrupted"
         fi
-
-        rm "$tmpfile"
     done
 
     debug "Done $HOOK_NAME hook"
