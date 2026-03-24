@@ -22,7 +22,7 @@ fi
 checkSkipVars() {
     if [ -n "$SKIP_ALL_HOOKS" ] || echo "$HOOK_NAME" | grep -Eq "$SKIP_HOOKS"
     then
-        log "Skipping $(basename "$0") hook"
+        log "Skipping $HOOK_NAME hook"
         debug "SKIP_ALL_HOOKS=$SKIP_ALL_HOOKS"
         debug "SKIP_HOOKS=$SKIP_HOOKS"
         exit 0
