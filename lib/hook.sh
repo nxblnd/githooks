@@ -34,14 +34,7 @@ resolveVar() {
     git_config_path="$2"
     default_value="$3"
 
-    env_var_value="$(printenv "$env_var_name" || true)"
-
-    if [ -n "$env_var_value" ]
-    then
-        echo "$env_var_value"
-    else
-        getGitConfig "$git_config_path" 2>/dev/null || echo "$default_value"
-    fi
+    printenv "$env_var_name" || getGitConfig "$git_config_path" 2>/dev/null || echo "$default_value"
 }
 
 loadVars() {
