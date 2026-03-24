@@ -4,6 +4,7 @@ set -eu
 
 . "$(dirname "$0")/lib/color.sh"
 
+# shellcheck disable=SC2034  # LEVEL_SILENT exists for possible future needs
 LEVEL_SILENT=0
 LEVEL_ERROR=1
 LEVEL_WARNING=2
