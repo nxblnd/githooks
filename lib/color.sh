@@ -29,7 +29,7 @@ palette() {
 color_mixer() {
     color_base="$1"
     color_code=$(palette "$2") || return 1
-    sgr $((color_base + color_code))
+    sgr "$((color_base + color_code))"
 }
 
 fg() {
