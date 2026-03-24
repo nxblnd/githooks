@@ -6,7 +6,7 @@ set -eu
 
 HOOK_NAME=$(basename "$0")
 
-if git config list >/dev/null
+if git config list >/dev/null 2>&1
 then
     # git >=2.46.0
     getGitConfig() {
