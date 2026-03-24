@@ -55,7 +55,7 @@ main() {
     loadVars
     checkSkipVars
 
-    tmpfile=$(mktemp --suffix "_githook")
+    tmpfile=$(mktemp "${TMPDIR:-/tmp}/tmp.githook-XXXXXX")
     trap 'cleanup' INT QUIT TERM EXIT
 
     log "Running $HOOK_NAME hook"
