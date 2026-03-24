@@ -36,22 +36,22 @@ printMessage() {
 
 DEBUG_COLOR="$RESET"
 debug() {
-    printMessage -l "DEBUG" -c "$DEBUG_COLOR" -v "$LEVEL_DEBUG" "$1"
+    printMessage -l "DEBUG" -c "$DEBUG_COLOR" -v "$LEVEL_DEBUG" "$@"
 }
 
 LOG_COLOR="$(fg cyan)"
 log() {
-    printMessage -l "INFO" -c "$LOG_COLOR" -v "$LEVEL_INFO" "$1"
+    printMessage -l "INFO" -c "$LOG_COLOR" -v "$LEVEL_INFO" "$@"
 }
 
 WARNING_COLOR="$(fg yellow)"
 warning() {
-    printMessage -l "WARNING" -c "$WARNING_COLOR" -v "$LEVEL_WARNING" "$1"
+    printMessage -l "WARNING" -c "$WARNING_COLOR" -v "$LEVEL_WARNING" "$@"
 }
 
 ERROR_COLOR="$(fg red)"
 error() {
-    printMessage -l "ERROR" -c "$ERROR_COLOR" -v "$LEVEL_ERROR" "$1"
+    printMessage -l "ERROR" -c "$ERROR_COLOR" -v "$LEVEL_ERROR" "$@"
 }
 
 printFile() {
