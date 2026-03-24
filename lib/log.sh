@@ -10,6 +10,8 @@ LEVEL_WARNING=2
 LEVEL_INFO=3
 LEVEL_DEBUG=4
 
+RESET=$(reset)
+
 printMessage() {
     OPTIND=1
     while getopts "c:l:v:" opt
@@ -28,23 +30,27 @@ printMessage() {
     label_color=${label_color:-$RESET}
     message="$*"
 
-    printf "%b%-8s%b: %s\n" "$label_color" "$label_text" "$(reset)" "$message" >&2
+    printf "%b%-8s%b: %s\n" "$label_color" "$label_text" "$RESET" "$message" >&2
 }
 
+DEBUG_COLOR="$RESET"
 debug() {
-    printMessage -l "DEBUG" -c "$(reset)" -v "$LEVEL_DEBUG" "$1"
+    printMessage -l "DEBUG" -c "$DEBUG_COLOR" -v "$LEVEL_DEBUG" "$1"
 }
 
+LOG_COLOR="$(fg cyan)"
 log() {
-    printMessage -l "INFO" -c "$(fg cyan)" -v "$LEVEL_INFO" "$1"
+    printMessage -l "INFO" -c "$LOG_COLOR" -v "$LEVEL_INFO" "$1"
 }
 
+WARNING_COLOR="$(fg yellow)"
 warning() {
-    printMessage -l "WARNING" -c "$(fg yellow)" -v "$LEVEL_WARNING" "$1"
+    printMessage -l "WARNING" -c "$WARNING_COLOR" -v "$LEVEL_WARNING" "$1"
 }
 
+ERROR_COLOR="$(fg red)"
 error() {
-    printMessage -l "ERROR" -c "$(fg red)" -v "$LEVEL_ERROR" "$1"
+    printMessage -l "ERROR" -c "$ERROR_COLOR" -v "$LEVEL_ERROR" "$1"
 }
 
 printFile() {
