@@ -3,6 +3,7 @@
 set -eu
 
 . "$(dirname "$0")/lib/log.sh"
+. "$(dirname "$0")/lib/time.sh"
 
 HOOK_NAME=$(basename "$0")
 
@@ -84,8 +85,9 @@ main() {
 
         set +e
         log "Running $HOOK_NAME/$script_basename"
-        "$script" >"$tmpfile" 2>&1
+        measureExecution "$script" >"$tmpfile" 2>&1
         status=$?
+        log "Completed $HOOK_NAME/$script_basename in $(fmtTime $duration)"
         debug "$HOOK_NAME/$script_basename exit code $status"
         set -e
 
