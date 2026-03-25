@@ -7,10 +7,29 @@ CSI="\033["
 
 if [ -t 1 ] && [ -z "${NO_COLOR+nocolor}" ]
 then
-    sgr() { printf "%b%sm" "$CSI" "$1"; }
+    mkCtrlSeq() { printf "%b%s" "$CSI" "$@"; }
 else
-    sgr() { :; }
+    mkCtrlSeq() { :; }
 fi
+
+commandCode() {
+    case "$1" in
+        up) echo "A" ;;
+        down) echo "B" ;;
+        forward) echo "C" ;;
+        back) echo "D" ;;
+        next-line) echo "E" ;;
+        prev-line) echo "F" ;;
+        erase-display) echo "J" ;;
+        erase-line) echo "K" ;;
+        sgr) echo "m" ;;
+        *) return 1 ;;
+    esac
+}
+
+escape() {
+    mkCtrlSeq "$2$(commandCode "$1")"
+}
 
 palette() {
     case "$1" in
@@ -29,7 +48,7 @@ palette() {
 color_mixer() {
     color_base="$1"
     color_code=$(palette "$2") || return 1
-    sgr "$((color_base + color_code))"
+    escape "sgr" "$((color_base + color_code))"
 }
 
 fg() {
@@ -49,9 +68,9 @@ bgBright() {
 }
 
 reset() {
-    sgr 0
+    escape "sgr" 0
 }
 
 bold() {
-    sgr 1
+    escape "sgr" 1
 }
