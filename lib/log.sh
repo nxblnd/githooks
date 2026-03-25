@@ -31,10 +31,12 @@ printMessage() (
     done
     shift $((OPTIND - 1))
 
-    [ "$LOG_LEVEL" -lt "$verbosity_level" ] && return 0
-
     label_color=${label_color:-$RESET}
+    label_text=${label_text:-"Message"}
+    verbosity_level=${verbosity_level:-$LEVEL_INFO}
     message="$*"
+
+    [ "$LOG_LEVEL" -lt "$verbosity_level" ] && return 0
 
     printf "%b%-8s%b: %s\n" "$label_color" "$label_text" "$RESET" "$message" >&2
 )
