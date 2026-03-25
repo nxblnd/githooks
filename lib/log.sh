@@ -19,6 +19,31 @@ WARNING_COLOR="$(fg yellow)"
 LOG_COLOR="$(fg cyan)"
 DEBUG_COLOR="$RESET"
 
+parseLogLevel() {
+    IFS= read -r target_level
+
+    if echo "$target_level" | grep -Eq '^[0-9]+$'
+    then
+        echo "$target_level"
+        return
+    fi
+
+    target_level=$(echo "$target_level" | tr '[:upper:]' '[:lower:]')
+
+    case "$target_level" in
+        silent) echo "$LEVEL_SILENT" ;;
+        error) echo "$LEVEL_ERROR" ;;
+        warning) echo "$LEVEL_WARNING" ;;
+        info) echo "$LEVEL_INFO" ;;
+        debug) echo "$LEVEL_DEBUG" ;;
+        *)  echo "$LEVEL_INFO"
+            LOG_LEVEL="$LEVEL_INFO"
+            printMessage -c "$WARNING_COLOR" -l "WARNING" "Can't parse LOG_LEVEL (not a positive integer, not valid string)"
+            printMessage -c "$WARNING_COLOR" -l "WARNING" "Will use INFO level"
+            ;;
+    esac
+}
+
 printMessage() (
     while getopts "c:l:v:" opt
     do

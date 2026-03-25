@@ -42,7 +42,7 @@ resolveVar() {
 }
 
 loadVars() {
-    LOG_LEVEL="$(resolveVar LOG_LEVEL hooks.log_level "$LEVEL_INFO")"
+    LOG_LEVEL="$(resolveVar LOG_LEVEL hooks.log_level "$LEVEL_INFO" | parseLogLevel)"
     SKIP_HOOKS="$(resolveVar SKIP_HOOKS hooks.skip " ")"
     SKIP_ALL_HOOKS="$(resolveVar SKIP_ALL_HOOKS hooks.skip_all "")"
 }
