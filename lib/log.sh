@@ -91,3 +91,7 @@ printFile() {
         "$printer_function" "$line"
     done < "$filename"
 }
+
+deletePrevLine() {
+    printf "%b" "$(escape "up" 1)$(escape "erase-line" 2)" >&2
+}

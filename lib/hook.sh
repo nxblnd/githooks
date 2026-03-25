@@ -110,9 +110,10 @@ main() {
         fi
 
         set +e
-        log "Running $HOOK_NAME/$script_basename"
+        log "Running $HOOK_NAME/$script_basename..."
         measureExecution "$script" >"$tmpfile" 2>&1
         status=$?
+        deletePrevLine
         log "Completed $HOOK_NAME/$script_basename in $(fmtTime $duration)"
         debug "$HOOK_NAME/$script_basename exit code $status"
         set -e
