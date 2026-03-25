@@ -14,6 +14,10 @@ LEVEL_DEBUG=4
 LOG_LEVEL=${LOG_LEVEL:-$LEVEL_INFO}
 
 RESET=$(reset)
+ERROR_COLOR="$(fg red)"
+WARNING_COLOR="$(fg yellow)"
+LOG_COLOR="$(fg cyan)"
+DEBUG_COLOR="$RESET"
 
 printMessage() {
     OPTIND=1
@@ -36,22 +40,18 @@ printMessage() {
     printf "%b%-8s%b: %s\n" "$label_color" "$label_text" "$RESET" "$message" >&2
 }
 
-DEBUG_COLOR="$RESET"
 debug() {
     printMessage -l "DEBUG" -c "$DEBUG_COLOR" -v "$LEVEL_DEBUG" "$@"
 }
 
-LOG_COLOR="$(fg cyan)"
 log() {
     printMessage -l "INFO" -c "$LOG_COLOR" -v "$LEVEL_INFO" "$@"
 }
 
-WARNING_COLOR="$(fg yellow)"
 warning() {
     printMessage -l "WARNING" -c "$WARNING_COLOR" -v "$LEVEL_WARNING" "$@"
 }
 
-ERROR_COLOR="$(fg red)"
 error() {
     printMessage -l "ERROR" -c "$ERROR_COLOR" -v "$LEVEL_ERROR" "$@"
 }
