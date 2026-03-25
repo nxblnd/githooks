@@ -61,6 +61,32 @@ cleanup() {
     fi
 }
 
+handleExitCode() {
+    if [ "$status" -eq 0 ]
+    then
+        if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
+        then
+            debug "$HOOK_NAME/$script_basename output below"
+            printFile "debug" "$tmpfile"
+        fi
+    elif [ "$status" -lt 126 ]
+    then
+        warning "$HOOK_NAME/$script_basename failed, see log below"
+        printFile "warning" "$tmpfile"
+        exit 1
+    elif [ "$status" -eq 126 ]
+    then
+        error "$HOOK_NAME/$script_basename was not executable. How is this code running?"
+        exit 2
+    elif [ "$status" -eq 127 ]
+    then
+        error "$HOOK_NAME/$script_basename was not found. How is this code running?"
+        exit 2
+    else
+        warning "$HOOK_NAME/$script_basename was interrupted"
+    fi
+}
+
 main() {
     loadVars
     checkSkipVars
@@ -91,29 +117,7 @@ main() {
         debug "$HOOK_NAME/$script_basename exit code $status"
         set -e
 
-        if [ "$status" -eq 0 ]
-        then
-            if [ "$LOG_LEVEL" -ge "$LEVEL_DEBUG" ]
-            then
-                debug "$HOOK_NAME/$script_basename output below"
-                printFile "debug" "$tmpfile"
-            fi
-        elif [ "$status" -lt 126 ]
-        then
-            warning "$HOOK_NAME/$script_basename failed, see log below"
-            printFile "warning" "$tmpfile"
-            exit 1
-        elif [ "$status" -eq 126 ]
-        then
-            error "$HOOK_NAME/$script_basename was not executable. How is this code running?"
-            exit 2
-        elif [ "$status" -eq 127 ]
-        then
-            error "$HOOK_NAME/$script_basename was not found. How is this code running?"
-            exit 2
-        else
-            warning "$HOOK_NAME/$script_basename was interrupted"
-        fi
+        handleExitCode
     done
 
     debug "Done $HOOK_NAME hook"
