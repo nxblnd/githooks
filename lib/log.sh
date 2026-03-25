@@ -58,7 +58,7 @@ printFile() {
     printer_function=$1
     filename=$2
 
-    while IFS= read -r line
+    while IFS= read -r line || [ -n "$line" ]
     do
         "$printer_function" "$line"
     done < "$filename"
