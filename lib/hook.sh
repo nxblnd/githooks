@@ -34,17 +34,22 @@ checkSkipVars() {
 }
 
 resolveVar() {
-    env_var_name="$1"
+    env_var_value="$1"
     git_config_path="$2"
     default_value="$3"
 
-    printenv "$env_var_name" || getGitConfig "$git_config_path" 2>/dev/null || echo "$default_value"
+    if [ -n "$env_var_value" ]
+    then
+        echo "$env_var_value"
+    else
+        getGitConfig "$git_config_path" 2>/dev/null || echo "$default_value"
+    fi
 }
 
 loadVars() {
-    LOG_LEVEL="$(resolveVar LOG_LEVEL hooks.log_level "$LEVEL_INFO" | parseLogLevel)"
-    SKIP_HOOKS="$(resolveVar SKIP_HOOKS hooks.skip " ")"
-    SKIP_ALL_HOOKS="$(resolveVar SKIP_ALL_HOOKS hooks.skip_all "")"
+    LOG_LEVEL="$(resolveVar "${LOG_LEVEL:-}" hooks.log_level "$LEVEL_INFO" | parseLogLevel)"
+    SKIP_HOOKS="$(resolveVar "${SKIP_HOOKS:-}" hooks.skip " ")"
+    SKIP_ALL_HOOKS="$(resolveVar "${SKIP_ALL_HOOKS:-}" hooks.skip_all "")"
 }
 
 cleanup() {
