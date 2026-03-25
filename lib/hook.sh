@@ -44,7 +44,7 @@ loadVars() {
 }
 
 cleanup() {
-    if [ -e "$tmpfile" ]
+    if [ -n "${tmpfile:-}" ] && [ -e "$tmpfile" ]
     then
         debug "Removing tmpfile"
         rm "$tmpfile"
