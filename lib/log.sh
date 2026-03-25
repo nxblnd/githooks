@@ -19,8 +19,7 @@ WARNING_COLOR="$(fg yellow)"
 LOG_COLOR="$(fg cyan)"
 DEBUG_COLOR="$RESET"
 
-printMessage() {
-    OPTIND=1
+printMessage() (
     while getopts "c:l:v:" opt
     do
         case "$opt" in
@@ -38,7 +37,7 @@ printMessage() {
     message="$*"
 
     printf "%b%-8s%b: %s\n" "$label_color" "$label_text" "$RESET" "$message" >&2
-}
+)
 
 debug() {
     printMessage -l "DEBUG" -c "$DEBUG_COLOR" -v "$LEVEL_DEBUG" "$@"
