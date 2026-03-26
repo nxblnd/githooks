@@ -5,7 +5,7 @@
 
 CSI="\033["
 
-if [ -t 2 ] && [ -z "${NO_COLOR+nocolor}" ]
+if [ -t 2 ] && [ -z "${NO_COLOR:-}" ]
 then
     mkCtrlSeq() { printf "%b%s" "$CSI" "$@"; }
 else
