@@ -1,8 +1,13 @@
 #!/usr/bin/env sh
 
-nowUnix() {
-    date "+%s"
-}
+if date "+%s%3N" >/dev/null 2>&1
+then
+    millisec="true"
+    nowUnix() { date "+%s%3N"; }
+else
+    nowUnix() { date "+%s"; }
+fi
+
 measureExecution() (
     while getopts "o:e:" opt
     do
@@ -34,15 +39,27 @@ measureExecution() (
 )
 
 fmtTime() {
-    total_seconds="$1"
+    total_time="$1"
+
+    if [ -n "${millisec:-}" ]
+    then
+        total_seconds="$((total_time / 1000))"
+    else
+        total_seconds="$total_time"
+    fi
 
     minutes="$((total_seconds / 60))"
     seconds="$((total_seconds % 60))"
 
+    if [ -n "${millisec:-}" ]
+    then
+        seconds="$seconds.$((total_time % 1000))"
+    fi
+
     if [ "$minutes" -ne 0 ]
     then
-        printf "%dm %ds\n" "$minutes" "$seconds"
+        printf "%sm %ss\n" "$minutes" "$seconds"
     else
-        printf "%ds\n" "$seconds"
+        printf "%ss\n" "$seconds"
     fi
 }
