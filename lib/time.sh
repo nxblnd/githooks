@@ -3,18 +3,35 @@
 nowUnix() {
     date "+%s"
 }
+measureExecution() (
+    while getopts "o:e:" opt
+    do
+        case "$opt" in
+            o) out="$OPTARG" ;;
+            e) err="$OPTARG" ;;
+            *) exit ;;
+        esac
+    done
+    shift $((OPTIND - 1))
 
-measureExecution() {
+    out=$(realpath "${out:-/dev/stdout}")
+    err=$(realpath "${err:-/dev/stderr}")
+
     start_time="$(nowUnix)"
 
-    "$@"
+    if [ "$out" = "$err" ]
+    then
+        "$@" >"$out" 2>&1
+    else
+        "$@" >"$out" 2>"$err"
+    fi
     status="$?"
 
     end_time="$(nowUnix)"
-    export duration="$((end_time - start_time))"
 
+    echo "$((end_time - start_time))"
     return "$status"
-}
+)
 
 fmtTime() {
     total_seconds="$1"
