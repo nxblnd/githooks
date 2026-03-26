@@ -12,42 +12,37 @@ else
     mkCtrlSeq() { :; }
 fi
 
-commandCode() {
-    case "$1" in
-        up) echo "A" ;;
-        down) echo "B" ;;
-        forward) echo "C" ;;
-        back) echo "D" ;;
-        next-line) echo "E" ;;
-        prev-line) echo "F" ;;
-        erase-display) echo "J" ;;
-        erase-line) echo "K" ;;
-        sgr) echo "m" ;;
-        *) return 1 ;;
-    esac
-}
-
 escape() {
-    mkCtrlSeq "$2$(commandCode "$1")"
-}
-
-palette() {
     case "$1" in
-        black) echo 0 ;;
-        red) echo 1 ;;
-        green) echo 2 ;;
-        yellow) echo 3 ;;
-        blue) echo 4 ;;
-        magenta) echo 5 ;;
-        cyan) echo 6 ;;
-        white) echo 7 ;;
+        up) command_code="A" ;;
+        down) command_code="B" ;;
+        forward) command_code="C" ;;
+        back) command_code="D" ;;
+        next-line) command_code="E" ;;
+        prev-line) command_code="F" ;;
+        erase-display) command_code="J" ;;
+        erase-line) command_code="K" ;;
+        sgr) command_code="m" ;;
         *) return 1 ;;
     esac
+
+    mkCtrlSeq "$2$command_code"
 }
 
 color_mixer() {
+    case "$2" in
+        black) color_code=0 ;;
+        red) color_code=1 ;;
+        green) color_code=2 ;;
+        yellow) color_code=3 ;;
+        blue) color_code=4 ;;
+        magenta) color_code=5 ;;
+        cyan) color_code=6 ;;
+        white) color_code=7 ;;
+        *) return 1 ;;
+    esac
+
     color_base="$1"
-    color_code=$(palette "$2") || return 1
     escape "sgr" "$((color_base + color_code))"
 }
 
