@@ -73,15 +73,15 @@ handleExitCode() {
     then
         warning "$HOOK_NAME/$script_basename failed, see log below"
         printFile "warning" "$tmpfile"
-        exit 1
+        exit "$status"
     elif [ "$status" -eq 126 ]
     then
         error "$HOOK_NAME/$script_basename was not executable. How is this code running?"
-        exit 2
+        exit "$status"
     elif [ "$status" -eq 127 ]
     then
         error "$HOOK_NAME/$script_basename was not found. How is this code running?"
-        exit 2
+        exit "$status"
     else
         warning "$HOOK_NAME/$script_basename was interrupted"
     fi
