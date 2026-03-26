@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-set -eu
-
 . "$(dirname "$0")/lib/log.sh"
 . "$(dirname "$0")/lib/time.sh"
 
@@ -24,7 +22,7 @@ defineGitConfig() {
     fi
 }
 
-checkSkipVars() {
+checkSkip() {
     if [ -n "$SKIP_ALL_HOOKS" ] || echo "$HOOK_NAME" | grep -Eq "$SKIP_HOOKS"
     then
         log "Skipping $HOOK_NAME hook"
@@ -91,13 +89,29 @@ handleExitCode() (
     fi
 )
 
-main() {
-    loadVars
-    checkSkipVars
-    defineGitConfig
+runScript() {
+    log "Running $HOOK_NAME/$script_basename..."
 
+    duration=$(measureExecution -o "$tmpfile" -e "$tmpfile" "$script")
+    status="$?"
+
+    deletePrevLine
+    log "Completed $HOOK_NAME/$script_basename in $(fmtTime "$duration")"
+    debug "$HOOK_NAME/$script_basename exit code $status"
+
+    return "$status"
+}
+
+setupTmpFile() {
     tmpfile=$(mktemp "${TMPDIR:-/tmp}/tmp.githook-XXXXXX")
     trap 'cleanup' INT QUIT TERM EXIT
+}
+
+main() {
+    loadVars
+    checkSkip
+    defineGitConfig
+    setupTmpFile
 
     log "Running $HOOK_NAME hook"
     for script in "$HOOK_NAME.d"/*
@@ -113,16 +127,8 @@ main() {
             continue
         fi
 
-        set +e
-        log "Running $HOOK_NAME/$script_basename..."
-        duration=$(measureExecution -o "$tmpfile" -e "$tmpfile" "$script")
-        status="$?"
-        deletePrevLine
-        log "Completed $HOOK_NAME/$script_basename in $(fmtTime "$duration")"
-        debug "$HOOK_NAME/$script_basename exit code $status"
-        set -e
-
-        handleExitCode "$script_basename" "$status" "$tmpfile"
+        runScript
+        handleExitCode "$script_basename" "$?" "$tmpfile"
     done
 
     debug "Done $HOOK_NAME hook"

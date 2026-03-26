@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-set -eu
-
 . "$(dirname "$0")/lib/escape.sh"
 
 # shellcheck disable=SC2034  # LEVEL_SILENT exists for possible future needs
