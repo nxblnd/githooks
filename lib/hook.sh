@@ -114,7 +114,10 @@ main() {
     setupTmpFile
 
     log "Running $HOOK_NAME hook"
-    for script in "$HOOK_NAME.d"/*
+
+    hooks_path="$(getGitConfig "core.hooksPath")/$HOOK_NAME.d"
+
+    for script in "$hooks_path"/*
     do
         # Safeguard empty directory expansion into '*' named file.
         [ -e "$script" ] || continue
