@@ -23,13 +23,23 @@ addHooks() {
     done
 }
 
+removeHooks() {
+    selected_hooks=$(selector -m <"hooks")
+
+    for hook in $selected_hooks
+    do
+        [ -e "$hook" ] && rm "$hook"
+        [ -z "$(ls -A "$hook.d")" ] && rm -r "$hook.d" # remove hook dir only if it was empty
+    done
+}
+
 main() {
     while true
     do
         case $(printf "%s" "$MODES" | selector) in
             "$INSTALL") exit 1;;
             "$ADD") addHooks ;;
-            "$REMOVE") exit 1 ;;
+            "$REMOVE") removeHooks ;;
             "$QUIT") exit ;;
             *) exit 1 ;;
         esac
