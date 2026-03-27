@@ -59,7 +59,7 @@ cleanup() {
     fi
 }
 
-handleExitCode() (
+handleExitCode() {
     script="$1"
     status="$2"
     tmpfile="$3"
@@ -87,7 +87,7 @@ handleExitCode() (
     else
         warning "$HOOK_NAME/$script was interrupted"
     fi
-)
+}
 
 runScript() {
     log "Running $HOOK_NAME/$script_basename..."
