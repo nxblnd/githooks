@@ -2,25 +2,9 @@
 
 . "$(dirname "$0")/lib/log.sh"
 . "$(dirname "$0")/lib/time.sh"
+. "$(dirname "$0")/lib/util.sh"
 
 HOOK_NAME=$(basename "$0")
-
-defineGitConfig() {
-    debug "$(git --version)"
-
-    # Probably easier to check if git supports new sub command this way
-    # than compare version numbers
-    if git config list >/dev/null 2>&1
-    then
-        # git >=2.46.0
-        debug "Using 'git config' with subcommands"
-        getGitConfig() { git config get "$1"; }
-    else
-        # git <2.46.0
-        debug "Using 'git config' with flags"
-        getGitConfig() { git config --get "$1"; }
-    fi
-}
 
 checkSkip() {
     if [ -n "$SKIP_ALL_HOOKS" ] || echo "$HOOK_NAME" | grep -Eq "$SKIP_HOOKS"
@@ -49,14 +33,6 @@ loadVars() {
     LOG_LEVEL="$(resolveVar "${LOG_LEVEL:-}" hooks.log_level "$LEVEL_INFO" | parseLogLevel)"
     SKIP_HOOKS="$(resolveVar "${SKIP_HOOKS:-}" hooks.skip " ")"
     SKIP_ALL_HOOKS="$(resolveVar "${SKIP_ALL_HOOKS:-}" hooks.skip_all "")"
-}
-
-cleanup() {
-    if [ -n "${tmpfile:-}" ] && [ -e "$tmpfile" ]
-    then
-        debug "Removing tmpfile"
-        rm "$tmpfile"
-    fi
 }
 
 handleExitCode() {
@@ -100,11 +76,6 @@ runScript() {
     debug "$HOOK_NAME/$script_basename exit code $status"
 
     return "$status"
-}
-
-setupTmpFile() {
-    tmpfile=$(mktemp "${TMPDIR:-/tmp}/tmp.githook-XXXXXX")
-    trap 'cleanup' INT QUIT TERM EXIT
 }
 
 main() {
