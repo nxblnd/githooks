@@ -8,7 +8,7 @@ installHooks() {
 
     for hook in $selected_hooks
     do
-        ln -s "lib/hook.sh" "$hook"
+        [ ! -e "$hook" ] && ln -s "lib/hook.sh" "$hook"
         mkdir -p "$hook.d"
     done
 }
