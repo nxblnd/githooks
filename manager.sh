@@ -13,7 +13,7 @@ $ADD
 $REMOVE
 $QUIT"
 
-installHooks() {
+addHooks() {
     selected_hooks=$(selector -m <"hooks")
 
     for hook in $selected_hooks
@@ -27,8 +27,8 @@ main() {
     while true
     do
         case $(printf "%s" "$MODES" | selector) in
-            "$INSTALL") installHooks ;;
-            "$ADD") exit 1 ;;
+            "$INSTALL") exit 1;;
+            "$ADD") addHooks ;;
             "$REMOVE") exit 1 ;;
             "$QUIT") exit ;;
             *) exit 1 ;;
