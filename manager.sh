@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-. lib/log.sh
-. lib/selector.sh
+. "$(dirname "$0")/lib/log.sh"
+. "$(dirname "$0")/lib/selector.sh"
 
 INSTALL="Install"
 ADD="Add"
@@ -48,7 +48,15 @@ removeHooks() {
     done
 }
 
+loadVars() {
+    LOG_LEVEL="${LOG_LEVEL:-$(loadConfig "hooks.log_level" "$LEVEL_INFO")}"
+    LOG_LEVEL="$(parseLogLevel "$LOG_LEVEL")"
+}
+
 main() {
+    loadVars
+    chooseSelector
+
     while true
     do
         case $(printf "%s" "$MODES" | selector) in
