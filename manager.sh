@@ -7,6 +7,7 @@ INSTALL="Install"
 ADD="Add"
 REMOVE="Remove"
 QUIT="Quit"
+
 MODES="
 $INSTALL
 $ADD
@@ -20,6 +21,7 @@ addHooks() {
     do
         [ ! -e "$hook" ] && ln -s "lib/hook.sh" "$hook"
         mkdir -p "$hook.d"
+        log "Added $hook hook"
     done
 }
 
@@ -29,7 +31,20 @@ removeHooks() {
     for hook in $selected_hooks
     do
         [ -e "$hook" ] && rm "$hook"
-        [ -z "$(ls -A "$hook.d")" ] && rm -r "$hook.d" # remove hook dir only if it was empty
+        log "Removed $hook hook"
+
+        if [ -n "$(ls -A "$hook.d")" ]
+        then
+            warning "$hook directory is not empty"
+            deleteDir=$(printf "%b" "yes\nno" | selector)
+            case $deleteDir in
+                yes) : ;;
+                no) continue ;;
+                *) exit 1 ;;
+            esac
+        fi
+        rm -r "$hook.d"
+        log "Removed $hook script directory"
     done
 }
 
