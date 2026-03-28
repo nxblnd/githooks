@@ -36,7 +36,7 @@ removeHooks() {
         if [ -n "$(ls -A "$hook.d")" ]
         then
             warning "$hook directory is not empty"
-            deleteDir=$(printf "%b" "yes\nno" | selector)
+            deleteDir=$(selector -y)
             case $deleteDir in
                 yes) : ;;
                 no) continue ;;
