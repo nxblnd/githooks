@@ -2,17 +2,27 @@
 
 . "$(dirname "$0")/lib/log.sh"
 . "$(dirname "$0")/lib/selector.sh"
+. "$(dirname "$0")/lib/set.sh"
+. "$(dirname "$0")/lib/util.sh"
 
 INSTALL="Install"
 ADD="Add"
 REMOVE="Remove"
+UPDATE="Update"
 QUIT="Quit"
 
-MODES="
-$INSTALL
-$ADD
-$REMOVE
-$QUIT"
+mkMenu() {
+    hooks_path="$(getGitConfig "core.hooksPath")"
+
+    if [ -n "$hooks_path" ] || [ "$(realpath "./")" != "$hooks_path" ]
+    then
+        debug "Githooks not installed"
+        printf "%b" "$INSTALL\n$QUIT"
+        return
+    fi
+
+    printf "%b" "$ADD\n$REMOVE\n$UPDATE\n$QUIT"
+}
 
 addHooks() {
     selected_hooks=$(selector -m <"hooks")
@@ -36,8 +46,7 @@ removeHooks() {
         if [ -n "$(ls -A "$hook.d")" ]
         then
             warning "$hook directory is not empty"
-            deleteDir=$(selector -y)
-            case $deleteDir in
+            case $(selector -y) in
                 yes) : ;;
                 no) continue ;;
                 *) exit 1 ;;
@@ -56,13 +65,15 @@ loadVars() {
 main() {
     loadVars
     chooseSelector
+    defineGitConfig
 
     while true
     do
-        case $(printf "%s" "$MODES" | selector) in
+        case $(mkMenu | selector) in
             "$INSTALL") exit 1;;
             "$ADD") addHooks ;;
             "$REMOVE") removeHooks ;;
+            "$UPDATE") exit 1 ;;
             "$QUIT") exit ;;
             *) exit 1 ;;
         esac
