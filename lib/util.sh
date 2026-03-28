@@ -18,14 +18,10 @@ defineGitConfig() {
 }
 
 cleanup() {
-    if [ -n "${tmpfile:-}" ] && [ -e "$tmpfile" ]
-    then
-        debug "Removing tmpfile"
-        rm "$tmpfile"
-    fi
+    debug "Removing file(s) $*"
+    rm -f "$@"
 }
 
-setupTmpFile() {
-    tmpfile=$(mktemp "${TMPDIR:-/tmp}/tmp.githook-XXXXXX")
-    trap 'cleanup' INT QUIT TERM EXIT
+mkTmpFile() {
+    mktemp "${TMPDIR:-/tmp}/tmp.githook-XXXXXX"
 }

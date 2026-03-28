@@ -82,7 +82,8 @@ main() {
     loadVars
     checkSkip
     defineGitConfig
-    setupTmpFile
+    tmpfile=$(mkTmpFile)
+    trap 'cleanup $tmpfile' INT QUIT TERM EXIT
 
     log "Running $HOOK_NAME hook"
 
