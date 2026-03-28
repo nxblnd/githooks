@@ -75,8 +75,7 @@ main() {
 
     log "Running $HOOK_NAME hook"
 
-    hooks_path="$(getGitConfig "core.hooksPath")"
-    hooks_path="${hooks_path:-$(dirname "$0")}/$HOOK_NAME.d"
+    hooks_path="$(loadConfig "core.hooksPath" "$(dirname "$0")")/$HOOK_NAME.d"
     debug "Hooks path: $hooks_path"
 
     for script in "$hooks_path"/*
