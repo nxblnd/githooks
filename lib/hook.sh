@@ -16,23 +16,11 @@ checkSkip() {
     fi
 }
 
-resolveVar() {
-    env_var_value="$1"
-    git_config_path="$2"
-    default_value="$3"
-
-    if [ -n "$env_var_value" ]
-    then
-        echo "$env_var_value"
-    else
-        getGitConfig "$git_config_path" 2>/dev/null || echo "$default_value"
-    fi
-}
-
 loadVars() {
-    LOG_LEVEL="$(resolveVar "${LOG_LEVEL:-}" hooks.log_level "$LEVEL_INFO" | parseLogLevel)"
-    SKIP_HOOKS="$(resolveVar "${SKIP_HOOKS:-}" hooks.skip " ")"
-    SKIP_ALL_HOOKS="$(resolveVar "${SKIP_ALL_HOOKS:-}" hooks.skip_all "")"
+    LOG_LEVEL="${LOG_LEVEL:-$(loadConfig "hooks.log_level" "$LEVEL_INFO")}"
+    LOG_LEVEL="$(parseLogLevel "$LOG_LEVEL")"
+    SKIP_HOOKS="${SKIP_HOOKS:-$(loadConfig "hooks.skip" " ")}"
+    SKIP_ALL_HOOKS="${SKIP_ALL_HOOKS:-$(loadConfig "hooks.skip_all" "")}"
 }
 
 handleExitCode() {

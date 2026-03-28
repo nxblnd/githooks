@@ -17,7 +17,7 @@ LOG_COLOR="$(fg cyan)"
 DEBUG_COLOR="$RESET"
 
 parseLogLevel() {
-    IFS= read -r target_level
+    target_level="$1"
 
     if echo "$target_level" | grep -Eq '^[0-9]+$'
     then
