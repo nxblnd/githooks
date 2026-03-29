@@ -11,6 +11,9 @@ REMOVE="Remove"
 UPDATE="Update"
 QUIT="Quit"
 
+GITHOOKS_URL="https://github.com/nxblnd/githooks"
+BRANCH="main"
+
 mkMenu() {
     hooks_path="$(getGitConfig "core.hooksPath")"
 
@@ -63,6 +66,15 @@ removeHooks() {
     done
 }
 
+update() {
+    message="chore: updated git hooks"
+    git subtree \
+        --prefix ".githooks" \
+        --squash \
+        -m "$message" \
+        pull "$GITHOOKS_URL" "$BRANCH"
+}
+
 loadVars() {
     LOG_LEVEL="${LOG_LEVEL:-$(loadConfig "hooks.log_level" "$LEVEL_INFO")}"
     LOG_LEVEL="$(parseLogLevel "$LOG_LEVEL")"
@@ -79,7 +91,7 @@ main() {
             "$INSTALL") installHooks && addHooks ;;
             "$ADD") addHooks ;;
             "$REMOVE") removeHooks ;;
-            "$UPDATE") exit 1 ;;
+            "$UPDATE") update ;;
             "$QUIT") exit ;;
             *) exit 1 ;;
         esac
