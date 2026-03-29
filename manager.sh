@@ -6,6 +6,7 @@
 . "$(dirname "$0")/lib/util.sh"
 
 INSTALL="Install"
+SETUP="Setup"
 ADD="Add"
 REMOVE="Remove"
 UPDATE="Update"
@@ -27,7 +28,7 @@ mkMenu() {
     printf "%b" "$ADD\n$REMOVE\n$UPDATE\n$QUIT"
 }
 
-installHooks() {
+setupHooks() {
     install_path="$(realpath "$(dirname "$0")")"
     setGitConfig "core.hooksPath" "$install_path"
     debug "Set git core.hooksPath to '$install_path'"
@@ -88,7 +89,8 @@ main() {
     while true
     do
         case $(mkMenu | selector) in
-            "$INSTALL") installHooks && addHooks ;;
+            "$INSTALL") exit 1 ;;
+            "$SETUP") setupHooks && addHooks ;;
             "$ADD") addHooks ;;
             "$REMOVE") removeHooks ;;
             "$UPDATE") update ;;
