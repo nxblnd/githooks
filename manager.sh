@@ -28,6 +28,15 @@ mkMenu() {
     printf "%b" "$ADD\n$REMOVE\n$UPDATE\n$QUIT"
 }
 
+install() {
+    message="chore: added git hooks"
+    git subtree \
+        --prefix ".githooks" \
+        --squash \
+        -m "$message" \
+        add "$GITHOOKS_URL" "$BRANCH"
+}
+
 setupHooks() {
     install_path="$(realpath "$(dirname "$0")")"
     setGitConfig "core.hooksPath" "$install_path"
