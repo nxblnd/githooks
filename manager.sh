@@ -1,9 +1,16 @@
 #!/usr/bin/env sh
 
-. "$(dirname "$0")/lib/log.sh"
-. "$(dirname "$0")/lib/selector.sh"
-. "$(dirname "$0")/lib/set.sh"
-. "$(dirname "$0")/lib/util.sh"
+LOCATION="$(dirname "$0")"
+
+if [ -d "$LOCATION/lib" ]
+then
+    . "$LOCATION/lib/log.sh"
+    . "$LOCATION/lib/selector.sh"
+    . "$LOCATION/lib/set.sh"
+    . "$LOCATION/lib/util.sh"
+else
+    BOOTSTRAP=1
+fi
 
 INSTALL="Install"
 SETUP="Setup"
@@ -90,7 +97,19 @@ loadVars() {
     LOG_LEVEL="$(parseLogLevel "$LOG_LEVEL")"
 }
 
+bootstrap() {
+    if git rev-parse --is-inside-work-tree >/dev/null
+    then
+        install
+        exec "$(git rev-parse --show-toplevel)/.githooks/manager.sh"
+    else
+        exit 1
+    fi
+}
+
 main() {
+    [ -n "${BOOTSTRAP:-}" ] && bootstrap && exit
+
     loadVars
     chooseSelector
     defineGitConfig
