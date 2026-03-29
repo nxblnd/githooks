@@ -6,7 +6,6 @@ if [ -d "$LOCATION/lib" ]
 then
     . "$LOCATION/lib/log.sh"
     . "$LOCATION/lib/selector.sh"
-    . "$LOCATION/lib/set.sh"
     . "$LOCATION/lib/util.sh"
 else
     BOOTSTRAP=1
