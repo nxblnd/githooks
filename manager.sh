@@ -26,8 +26,8 @@ mkMenu() {
 
     if [ -z "$hooks_path" ]
     then
-        debug "Githooks not installed"
-        printf "%b" "$INSTALL\n$QUIT"
+        debug "Githooks are not set up"
+        printf "%b" "$SETUP\n$QUIT"
         return
     fi
 
