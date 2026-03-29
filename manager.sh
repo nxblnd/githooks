@@ -109,4 +109,4 @@ main() {
     done
 }
 
-main
+main "$@"

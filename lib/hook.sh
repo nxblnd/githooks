@@ -55,8 +55,9 @@ handleExitCode() {
 
 runScript() {
     log "Running $HOOK_NAME/$script_basename..."
+    debug "Executing '$script $*'"
 
-    duration=$(measureExecution -o "$tmpfile" -e "$tmpfile" "$script")
+    duration=$(measureExecution -o "$tmpfile" -e "$tmpfile" "$script" "$@")
     status="$?"
 
     [ "$LOG_LEVEL" -ge "$LOG_INFO" ] && deletePrevLine
@@ -91,11 +92,11 @@ main() {
             continue
         fi
 
-        runScript
+        runScript "$@"
         handleExitCode "$script_basename" "$?" "$tmpfile"
     done
 
     debug "Done $HOOK_NAME hook"
 }
 
-main
+main "$@"
