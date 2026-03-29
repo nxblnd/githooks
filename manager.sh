@@ -14,7 +14,7 @@ QUIT="Quit"
 mkMenu() {
     hooks_path="$(getGitConfig "core.hooksPath")"
 
-    if [ -n "$hooks_path" ] || [ "$(realpath "./")" != "$hooks_path" ]
+    if [ -z "$hooks_path" ]
     then
         debug "Githooks not installed"
         printf "%b" "$INSTALL\n$QUIT"
@@ -22,6 +22,12 @@ mkMenu() {
     fi
 
     printf "%b" "$ADD\n$REMOVE\n$UPDATE\n$QUIT"
+}
+
+installHooks() {
+    install_path="$(realpath "$(dirname "$0")")"
+    setGitConfig "core.hooksPath" "$install_path"
+    debug "Set git core.hooksPath to '$install_path'"
 }
 
 addHooks() {
@@ -70,7 +76,7 @@ main() {
     while true
     do
         case $(mkMenu | selector) in
-            "$INSTALL") exit 1;;
+            "$INSTALL") installHooks && addHooks ;;
             "$ADD") addHooks ;;
             "$REMOVE") removeHooks ;;
             "$UPDATE") exit 1 ;;

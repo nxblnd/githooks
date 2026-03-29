@@ -10,10 +10,12 @@ defineGitConfig() {
         # git >=2.46.0
         debug "Using 'git config' with subcommands"
         getGitConfig() { git config get "$1"; }
+        setGitConfig() { git config set "$@"; }
     else
         # git <2.46.0
         debug "Using 'git config' with flags"
         getGitConfig() { git config --get "$1"; }
+        setGitConfig() { git config --set "$@"; }
     fi
 }
 
