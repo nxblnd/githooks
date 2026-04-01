@@ -90,11 +90,27 @@ removeHooks() {
 
 update() {
     message="chore: updated git hooks"
+    git_output=$(mkTmpFile)
     git subtree \
         --prefix "$PREFIX" \
         --squash \
         -m "$message" \
-        pull "$GITHOOKS_URL" "$BRANCH"
+        pull "$GITHOOKS_URL" "$BRANCH" >"$git_output" 2>&1
+    status="$?"
+
+    if [ "$status" != 0 ]
+    then
+        error "Got error while updating"
+        printFile "error" "$git_output"
+        exit 1
+    fi
+
+    if grep -q 'is already at commit' "$git_output"
+    then
+        log "Git hooks are already at latest version!"
+    else
+        log "Successfully updated!"
+    fi
 }
 
 loadVars() {
