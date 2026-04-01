@@ -36,11 +36,18 @@ mkMenu() {
 
 install() {
     message="chore: added git hooks"
-    git subtree \
+    git_output=$(git subtree \
         --prefix "$PREFIX" \
         --squash \
         -m "$message" \
-        add "$GITHOOKS_URL" "$BRANCH"
+        add "$GITHOOKS_URL" "$BRANCH" 2>&1)
+    status="$?"
+
+    if [ "$status" != 0 ]
+    then
+        echo "$git_output"
+        exit 1
+    fi
 }
 
 setupHooks() {
