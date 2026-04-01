@@ -44,9 +44,8 @@ install() {
 }
 
 setupHooks() {
-    install_path="$(realpath "$(dirname "$0")")"
-    setGitConfig "core.hooksPath" "$install_path"
-    debug "Set git core.hooksPath to '$install_path'"
+    setGitConfig "core.hooksPath" "$HOOKS_PATH"
+    debug "Set git core.hooksPath to '$HOOKS_PATH'"
 }
 
 addHooks() {
@@ -54,8 +53,8 @@ addHooks() {
 
     for hook in $selected_hooks
     do
-        [ ! -e "$hook" ] && ln -s "$LOCATION/lib/hook.sh" "$hook"
-        mkdir -p "$hook.d"
+        [ ! -e "$HOOKS_PATH/$hook" ] && ln -s "$LOCATION/lib/hook.sh" "$HOOKS_PATH/$hook"
+        mkdir -p "$HOOKS_PATH/$hook.d"
         log "Added $hook hook"
     done
 }
@@ -65,10 +64,10 @@ removeHooks() {
 
     for hook in $selected_hooks
     do
-        [ -e "$hook" ] && rm "$hook"
+        [ -e "$HOOKS_PATH/$hook" ] && rm "$HOOKS_PATH/$hook"
         log "Removed $hook hook"
 
-        if [ -n "$(ls -A "$hook.d")" ]
+        if [ -n "$(ls -A "$HOOKS_PATH/$hook.d")" ]
         then
             warning "$hook directory is not empty"
             case $(selector -y) in
@@ -77,7 +76,7 @@ removeHooks() {
                 *) exit 1 ;;
             esac
         fi
-        rm -r "$hook.d"
+        rm -r "$HOOKS_PATH/$hook.d"
         log "Removed $hook script directory"
     done
 }
@@ -103,22 +102,37 @@ loadVars() {
     shift $((OPTIND - 1))
 
     PREFIX="${PREFIX:-.githooks}"
+    HOOKS_PATH="$GIT_ROOT/$PREFIX"
+    debug "Hooks path: '$HOOKS_PATH'"
 
     LOG_LEVEL="${LOG_LEVEL:-$(loadConfig "hooks.log_level" "$LEVEL_INFO")}"
     LOG_LEVEL="$(parseLogLevel "$LOG_LEVEL")"
 }
 
-bootstrap() {
+getGitRoot() {
     if git rev-parse --is-inside-work-tree >/dev/null
     then
-        install
-        exec "$(git rev-parse --show-toplevel)/$PREFIX/manager.sh"
+        GIT_ROOT="$(git rev-parse --show-toplevel)"
     else
+        git_error_message="Can't work outside git work tree!"
+        if error 2>/dev/null
+        then
+            error "$git_error_message"
+        else
+            echo "$git_error_message"
+        fi
+
         exit 1
     fi
 }
 
+bootstrap() {
+    install
+    exec "$GIT_ROOT/$PREFIX/manager.sh"
+}
+
 main() {
+    getGitRoot
     [ -n "${BOOTSTRAP:-}" ] && bootstrap && exit
 
     loadVars "$@"
