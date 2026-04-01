@@ -67,7 +67,7 @@ removeHooks() {
         [ -e "$HOOKS_PATH/$hook" ] && rm "$HOOKS_PATH/$hook"
         log "Removed $hook hook"
 
-        if [ -n "$(ls -A "$HOOKS_PATH/$hook.d")" ]
+        if [ -d "$HOOKS_PATH/$hook.d" ] && [ -n "$(ls -A "$HOOKS_PATH/$hook.d")" ]
         then
             warning "$hook directory is not empty"
             case $(selector -y) in
