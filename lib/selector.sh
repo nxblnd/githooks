@@ -74,5 +74,6 @@ selectorFzf() {
 
 selectorShell() {
     error "Not implemented yet"
+    error "Please install gum, fzf or do everything manually in the meantime"
     exit 1
 }
