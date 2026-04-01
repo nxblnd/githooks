@@ -72,7 +72,7 @@ main() {
     checkSkip
     defineGitConfig
     tmpfile=$(mkTmpFile)
-    trap 'cleanup $tmpfile' INT QUIT TERM EXIT
+    trap 'cleanup' INT QUIT TERM EXIT
 
     log "Running $HOOK_NAME hook"
 

@@ -160,6 +160,7 @@ main() {
     getGitRoot
     [ -n "${BOOTSTRAP:-}" ] && bootstrap && exit
 
+    trap 'cleanup' INT QUIT TERM EXIT
     loadVars "$@"
     chooseSelector
     defineGitConfig

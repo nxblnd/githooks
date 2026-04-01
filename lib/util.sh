@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+TMP="${TMPDIR:-/tmp}"
+TMP_PREFIX="tmp.githook"
+
 defineGitConfig() {
     debug "$(git --version)"
 
@@ -20,12 +23,15 @@ defineGitConfig() {
 }
 
 cleanup() {
-    debug "Removing file(s) $*"
-    rm -f "$@"
+    for file in "$TMP/$TMP_PREFIX-"*
+    do
+        debug "Removing file $file"
+        rm -f "$file"
+    done
 }
 
 mkTmpFile() {
-    mktemp "${TMPDIR:-/tmp}/tmp.githook-XXXXXX"
+    mktemp "${TMP}/$TMP_PREFIX-XXXXXX"
 }
 
 loadConfig() {
