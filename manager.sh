@@ -37,7 +37,7 @@ mkMenu() {
 install() {
     message="chore: added git hooks"
     git subtree \
-        --prefix ".githooks" \
+        --prefix "$PREFIX" \
         --squash \
         -m "$message" \
         add "$GITHOOKS_URL" "$BRANCH"
@@ -85,13 +85,25 @@ removeHooks() {
 update() {
     message="chore: updated git hooks"
     git subtree \
-        --prefix ".githooks" \
+        --prefix "$PREFIX" \
         --squash \
         -m "$message" \
         pull "$GITHOOKS_URL" "$BRANCH"
 }
 
 loadVars() {
+    OPTIND=1
+    while getopts "p:" opt
+    do
+        case "$opt" in
+            p) PREFIX="$OPTARG" ;;
+            *) error "Wrong option $opt" && exit 1 ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    PREFIX="${PREFIX:-.githooks}"
+
     LOG_LEVEL="${LOG_LEVEL:-$(loadConfig "hooks.log_level" "$LEVEL_INFO")}"
     LOG_LEVEL="$(parseLogLevel "$LOG_LEVEL")"
 }
@@ -100,7 +112,7 @@ bootstrap() {
     if git rev-parse --is-inside-work-tree >/dev/null
     then
         install
-        exec "$(git rev-parse --show-toplevel)/.githooks/manager.sh"
+        exec "$(git rev-parse --show-toplevel)/$PREFIX/manager.sh"
     else
         exit 1
     fi
@@ -109,7 +121,7 @@ bootstrap() {
 main() {
     [ -n "${BOOTSTRAP:-}" ] && bootstrap && exit
 
-    loadVars
+    loadVars "$@"
     chooseSelector
     defineGitConfig
 
