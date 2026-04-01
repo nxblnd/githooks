@@ -18,8 +18,8 @@ REMOVE="Remove"
 UPDATE="Update"
 QUIT="Quit"
 
-GITHOOKS_URL="https://github.com/nxblnd/githooks"
-BRANCH="main"
+GITHOOKS_URL="${GITHOOKS_URL:-https://github.com/nxblnd/githooks}"
+BRANCH="${BRANCH:-main}"
 
 mkMenu() {
     hooks_path="$(getGitConfig "core.hooksPath")"
