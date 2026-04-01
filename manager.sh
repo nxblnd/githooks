@@ -128,6 +128,7 @@ getGitRoot() {
 }
 
 bootstrap() {
+    PREFIX=".githooks"
     install
     exec "$GIT_ROOT/$PREFIX/manager.sh"
 }
