@@ -32,10 +32,11 @@ selector() {
 
 selectorGum() {
     OPTIND=1
-    while getopts "my" opt
+    while getopts "h:my" opt
     do
         case "$opt" in
-            m) multiselect="--no-limit" ;;
+            h) header="$OPTARG" ;;
+            m) multiselect="1" ;;
             y) yesno="1" ;;
             *) exit 1 ;;
         esac
@@ -48,15 +49,18 @@ selectorGum() {
         return
     fi
 
-    gum choose $multiselect
+    gum choose \
+        ${multiselect:+--no-limit} \
+        ${header:+--header "$header"}
 }
 
 selectorFzf() {
     OPTIND=1
-    while getopts "my" opt
+    while getopts "h:my" opt
     do
         case "$opt" in
-            m) multiselect="--multi" ;;
+            h) header="$OPTARG" ;;
+            m) multiselect="1" ;;
             y) yesno="1" ;;
             *) exit 1 ;;
         esac
@@ -69,7 +73,9 @@ selectorFzf() {
         return
     fi
 
-    fzf $multiselect
+    fzf \
+        ${multiselect:+--multi} \
+        ${header:+--header "$header"}
 }
 
 selectorShell() {

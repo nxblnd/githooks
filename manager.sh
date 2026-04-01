@@ -56,7 +56,7 @@ setupHooks() {
 }
 
 addHooks() {
-    selected_hooks=$(selector -m <"$LOCATION/hooks")
+    selected_hooks=$(selector -m -h "Select hooks to add" <"$LOCATION/hooks")
 
     for hook in $selected_hooks
     do
@@ -67,7 +67,7 @@ addHooks() {
 }
 
 removeHooks() {
-    selected_hooks=$(selector -m <"$LOCATION/hooks")
+    selected_hooks=$(selector -m -h "Select hooks to delete" <"$LOCATION/hooks")
 
     for hook in $selected_hooks
     do
@@ -77,7 +77,7 @@ removeHooks() {
         if [ -d "$HOOKS_PATH/$hook.d" ] && [ -n "$(ls -A "$HOOKS_PATH/$hook.d")" ]
         then
             warning "$hook directory is not empty"
-            case $(selector -y) in
+            case $(selector -y -h "Are you sure?") in
                 yes) : ;;
                 no) continue ;;
                 *) exit 1 ;;
@@ -167,7 +167,7 @@ main() {
 
     while true
     do
-        case $(mkMenu | selector) in
+        case $(mkMenu | selector -h "Choose operation") in
             "$INSTALL") exit 1 ;;
             "$SETUP") setupHooks && addHooks ;;
             "$ADD") addHooks ;;
