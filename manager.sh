@@ -50,18 +50,18 @@ setupHooks() {
 }
 
 addHooks() {
-    selected_hooks=$(selector -m <"hooks")
+    selected_hooks=$(selector -m <"$LOCATION/hooks")
 
     for hook in $selected_hooks
     do
-        [ ! -e "$hook" ] && ln -s "lib/hook.sh" "$hook"
+        [ ! -e "$hook" ] && ln -s "$LOCATION/lib/hook.sh" "$hook"
         mkdir -p "$hook.d"
         log "Added $hook hook"
     done
 }
 
 removeHooks() {
-    selected_hooks=$(selector -m <"hooks")
+    selected_hooks=$(selector -m <"$LOCATION/hooks")
 
     for hook in $selected_hooks
     do
