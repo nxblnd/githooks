@@ -103,14 +103,15 @@ loadVars() {
 
     PREFIX="${PREFIX:-.githooks}"
     HOOKS_PATH="$GIT_ROOT/$PREFIX"
-    debug "Hooks path: '$HOOKS_PATH'"
 
     LOG_LEVEL="${LOG_LEVEL:-$(loadConfig "hooks.log_level" "$LEVEL_INFO")}"
     LOG_LEVEL="$(parseLogLevel "$LOG_LEVEL")"
+
+    debug "Hooks path: '$HOOKS_PATH'"
 }
 
 getGitRoot() {
-    if git rev-parse --is-inside-work-tree >/dev/null
+    if git rev-parse --is-inside-work-tree 2>/dev/null
     then
         GIT_ROOT="$(git rev-parse --show-toplevel)"
     else
